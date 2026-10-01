@@ -1,0 +1,26 @@
+{
+  "platform": "docker",
+  "app": "apiforge",
+  "port": 8000,
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "network": {
+    "app": {
+      "public": true
+    }
+  },
+  "http": {
+    "app": {
+      "internalPort": 8000
+    }
+  },
+  "env": {
+    "DJANGO_SETTINGS_MODULE": "config.settings.production",
+    "DJANGO_DEBUG": "false",
+    "DJANGO_ALLOWED_HOSTS": "*.liara.run,liara.run",
+    "SERVE_SPA": "true",
+    "RUN_MIGRATIONS": "true",
+    "COLLECT_STATIC": "true"
+  }
+}

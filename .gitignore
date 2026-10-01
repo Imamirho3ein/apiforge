@@ -1,0 +1,39 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+db.sqlite3
+db.sqlite3.*
+staticfiles/
+media/
+
+# ---- Env ----
+.env
+.env.local
+.env.*.local
+
+# ---- Generated API schema (CI regenerates it) ----
+backend/openapi.yaml
+
+# ---- Node ----
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# ---- IDE / OS ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ---- Logs ----
+*.log
+npm-debug.log*

@@ -1,0 +1,81 @@
+name: Deploy to Liara
+
+# Deploy the single-container image to Liara (Iran) on every push to main.
+# Requires the repository secrets listed in docs/deployment-fa.md.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: liara-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build & deploy to Liara
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      # 1. Quality gates — never ship a broken build.
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint & test
+        working-directory: backend
+        run: |
+          ruff check .
+          ruff format --check .
+          pytest -q
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Typecheck & build
+        working-directory: frontend
+        run: npm run build
+
+      # 2. Deploy. Liara builds the Dockerfile itself, so the image is never
+      #    pushed to a registry — fewer credentials, one less moving part.
+      - name: Install Liara CLI
+        run: npm install -g @liara/cli
+
+      - name: Deploy
+        env:
+          LIARA_API_KEY: ${{ secrets.LIARA_API_KEY }}
+          LIARA_APP_ID: ${{ secrets.LIARA_APP_ID }}
+          LIARA_REGION: ${{ secrets.LIARA_REGION || 'iran' }}
+        run: |
+          liara deploy --platform docker --port 8000 \
+            --app "$LIARA_APP_ID" \
+            --region "$LIARA_REGION" \
+            --no-interactive \
+            --detach
+
+      - name: Wait for the health endpoint
+        run: |
+          URL="https://${{ secrets.LIARA_APP_ID }}.liara.run"
+          for i in $(seq 1 40); do
+            if curl -fsS "$URL/api/health/" >/dev/null 2>&1; then
+              echo "healthy: $URL"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::warning::app did not report healthy in time"
+          exit 1
