@@ -23,8 +23,23 @@ a **React 19 + TypeScript (Vite)** SPA, **PostgreSQL**, **Redis**, Docker and CI
 - [Project layout](#project-layout)
 - [Design decisions](#design-decisions)
 
-> 🇷🇩 **Persian speakers:** the full Liara deployment walkthrough (with `.ir`
-> domain setup) is in [`docs/deployment-fa.md`](docs/deployment-fa.md).
+> 🇮🇷 **Persian speakers:** read [`README.fa.md`](README.fa.md) instead, and
+> [`docs/deployment-fa.md`](docs/deployment-fa.md) for the Liara walkthrough.
+
+> 🇮🇷 **Persian:** the full Persian README is [`README.fa.md`](README.fa.md),
+> and the Liara / `.ir` deployment guide is [`docs/deployment-fa.md`](docs/deployment-fa.md).
+
+---
+
+## Screenshots
+
+| Dashboard (analytics) | Live request log |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Logs](docs/screenshots/logs.png) |
+
+| Projects | API keys |
+|---|---|
+| ![Projects](docs/screenshots/projects.png) | ![API keys](docs/screenshots/api-keys.png) |
 
 ---
 

@@ -138,7 +138,7 @@ export function Settings() {
             <div className="flex items-center justify-between gap-3">
               <dt className="text-slate-500">User ID</dt>
               <dd className="truncate font-mono text-xs text-slate-400" title={user?.id}>
-                {user?.id?.slice(0, 8)}
+                {String(user?.id ?? '').slice(0, 8)}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-3">
