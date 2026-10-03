@@ -20,22 +20,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Nothing to do until the Liara credentials exist. Keeping this green
+      # avoids a red X on every push while the project is still being set up.
+      - name: Check for Liara credentials
+        id: creds
+        env:
+          LIARA_API_KEY: ${{ secrets.LIARA_API_KEY }}
+          LIARA_APP_ID: ${{ secrets.LIARA_APP_ID }}
+        run: |
+          if [ -n "$LIARA_API_KEY" ] && [ -n "$LIARA_APP_ID" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::LIARA_API_KEY / LIARA_APP_ID are not set — skipping deploy. See docs/deployment-fa.md"
+          fi
+
       - name: Set up Python
+        if: steps.creds.outputs.configured == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Set up Node
+        if: steps.creds.outputs.configured == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "24"
 
       # 1. Quality gates — never ship a broken build.
       - name: Install backend dependencies
+        if: steps.creds.outputs.configured == 'true'
         working-directory: backend
         run: pip install -r requirements-dev.txt
 
       - name: Lint & test
+        if: steps.creds.outputs.configured == 'true'
         working-directory: backend
         run: |
           ruff check .
@@ -43,19 +62,23 @@ jobs:
           pytest -q
 
       - name: Install frontend dependencies
+        if: steps.creds.outputs.configured == 'true'
         working-directory: frontend
         run: npm ci
 
       - name: Typecheck & build
+        if: steps.creds.outputs.configured == 'true'
         working-directory: frontend
         run: npm run build
 
       # 2. Deploy. Liara builds the Dockerfile itself, so the image is never
       #    pushed to a registry — fewer credentials, one less moving part.
       - name: Install Liara CLI
+        if: steps.creds.outputs.configured == 'true'
         run: npm install -g @liara/cli
 
       - name: Deploy
+        if: steps.creds.outputs.configured == 'true'
         env:
           LIARA_API_KEY: ${{ secrets.LIARA_API_KEY }}
           LIARA_APP_ID: ${{ secrets.LIARA_APP_ID }}
@@ -68,6 +91,7 @@ jobs:
             --detach
 
       - name: Wait for the health endpoint
+        if: steps.creds.outputs.configured == 'true'
         run: |
           URL="https://${{ secrets.LIARA_APP_ID }}.liara.run"
           for i in $(seq 1 40); do

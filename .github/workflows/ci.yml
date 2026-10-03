@@ -62,8 +62,23 @@ jobs:
         run: |
           python manage.py spectacular --file openapi.yaml --settings=config.settings.test
           test -s openapi.yaml
-          grep -q '"/api/projects/"' openapi.yaml
-          grep -q '"/api/analytics/summary/"' openapi.yaml
+          # Parse it instead of grepping: quoting in shell strings is fragile.
+          # (The gateway is a plain Django view authenticated by API key, not
+          # a DRF view, so drf-spectacular intentionally does not document it.)
+          python - <<'PY'
+          import sys
+
+          import yaml
+
+          spec = yaml.safe_load(open("openapi.yaml", encoding="utf-8"))
+          assert spec["openapi"].startswith("3."), "not OpenAPI 3"
+          for path in ("/api/projects/", "/api/keys/", "/api/logs/",
+                       "/api/analytics/summary/", "/api/auth/token/"):
+              if path not in spec["paths"]:
+                  print(f"missing path in schema: {path}")
+                  sys.exit(1)
+          print(f"schema OK: {len(spec['paths'])} paths")
+          PY
 
       - name: Migrations are complete
         run: python manage.py makemigrations --check --dry-run --settings=config.settings.test
