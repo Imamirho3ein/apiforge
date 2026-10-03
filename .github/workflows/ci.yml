@@ -137,12 +137,32 @@ jobs:
         run: docker build -t apiforge:${{ github.sha }} .
       - name: Smoke-test the image
         run: |
-          docker run -d --name apiforge -e SERVE_SPA=true -e DJANGO_ALLOWED_HOSTS='*' \
+          # config.settings.production refuses to boot without a secret key.
+          docker run -d --name apiforge \
+            -e DJANGO_SECRET_KEY="ci-smoke-test-key-not-a-real-secret-0123456789" \
+            -e DJANGO_ALLOWED_HOSTS='*' \
+            -e SERVE_SPA=true \
             -p 8000:8000 apiforge:${{ github.sha }}
-          for i in $(seq 1 30); do
+          # Always clean up, even if an assertion below fails.
+          trap 'docker logs apiforge || true; docker rm -f apiforge || true' EXIT
+
+          for i in $(seq 1 40); do
             if curl -fsS http://127.0.0.1:8000/api/health/ >/dev/null 2>&1; then break; fi
-            sleep 2
+            sleep 3
           done
-          curl -fsS http://127.0.0.1:8000/api/health/
+
+          echo "--- health ---"
+          curl -fsS http://127.0.0.1:8000/api/health/ | tee /dev/stderr | grep -q '"status": "ok"'
+
+          echo "--- SPA shell ---"
           curl -fsS http://127.0.0.1:8000/ | grep -q '<div id="root">'
-          echo "image serves both the API and the SPA"
+
+          echo "--- client-side deep link falls back to the shell ---"
+          curl -fsS http://127.0.0.1:8000/projects/some-uuid | grep -q '<div id="root">'
+
+          echo "--- unknown API path is still a JSON 404 ---"
+          status=$(curl -s -o /tmp/404.json -w '%{http_code}' http://127.0.0.1:8000/api/nope)
+          test "$status" = "404"
+          grep -q 'not_found' /tmp/404.json
+
+          echo "image serves the API, the gateway SPA and JSON 404s"
