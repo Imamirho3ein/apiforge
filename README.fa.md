@@ -2,6 +2,13 @@
 
 <div dir="rtl">
 
+[![CI](https://github.com/Imamirho3ein/apiforge/actions/workflows/ci.yml/badge.svg)](https://github.com/Imamirho3ein/apiforge/actions/workflows/ci.yml)
+[![Deploy](https://github.com/Imamirho3ein/apiforge/actions/workflows/deploy-liara.yml/badge.svg)](https://github.com/Imamirho3ein/apiforge/actions/workflows/deploy-liara.yml)
+[![Python](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/django-6.1-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![React](https://img.shields.io/badge/react-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 **پلتفرم مدیریت API** — تعریف API، صدور کلید دسترسی، اعمال rate limit، شبیه‌سازی یا پروکسی ترافیک، و مشاهده‌ی زنده‌ی هر درخواست.
 
 ساخته‌شده به‌عنوان پروژه‌ی رزومه، برای نمایش مهارت‌های مهندسی فول‌استک:

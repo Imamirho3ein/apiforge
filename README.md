@@ -1,5 +1,13 @@
 # APIForge
 
+[![CI](https://github.com/Imamirho3ein/apiforge/actions/workflows/ci.yml/badge.svg)](https://github.com/Imamirho3ein/apiforge/actions/workflows/ci.yml)
+[![Deploy](https://github.com/Imamirho3ein/apiforge/actions/workflows/deploy-liara.yml/badge.svg)](https://github.com/Imamirho3ein/apiforge/actions/workflows/deploy-liara.yml)
+[![Python](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/django-6.1-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![React](https://img.shields.io/badge/react-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/typescript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 **APIForge** is an API management platform in the spirit of Kong / Stripe dashboard:
 declare your APIs, issue scoped API keys, enforce rate limits, mock or proxy traffic,
 and watch every request live.
