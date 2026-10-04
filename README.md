@@ -353,7 +353,8 @@ apiforge/
 ├── frontend/                   React SPA (Vite)
 ├── docs/
 │   ├── api-contract.md         the contract the two halves agree on
-│   └── deployment-fa.md        راهنمای دیپلوی روی Liara + دامنهٔ .ir
+│   ├── resume.md               résumé bullets + interview Q&A (English)
+│   ├── deployment-fa.md        راهنمای دیپلوی روی Liara + دامنهٔ .ir
 └── .github/workflows/         ci.yml · deploy-liara.yml
 ```
 
