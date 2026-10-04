@@ -1,0 +1,54 @@
+# Render blueprint — deploy APIForge with one click, on the free tier.
+#
+#   render.com → New → Blueprint → select this repository → Apply
+#
+# Everything the app needs is derived from the image itself: the React bundle
+# is served by Django, so a single web service covers the SPA, the control
+# API, the gateway and the websocket endpoint.
+#
+# Free-tier behaviour to expect:
+#   • the service sleeps after ~15 minutes of inactivity and takes ~30s to wake
+#   • the filesystem is ephemeral: SQLite is recreated on every cold start,
+#     which is why `seed_demo` is idempotent (it never duplicates data)
+#   • to keep data across restarts, attach a disk or a managed Postgres and
+#     set DATABASE_URL instead
+services:
+  - type: web
+    name: apiforge
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /api/health/
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "*.onrender.com,onrender.com"
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: "https://apiforge.onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://apiforge.onrender.com"
+      - key: GATEWAY_BASE_URL
+        value: "https://apiforge.onrender.com"
+      # Serve the React bundle from Django: one process, one port.
+      - key: SERVE_SPA
+        value: "true"
+      - key: RUN_MIGRATIONS
+        value: "true"
+      - key: COLLECT_STATIC
+        value: "true"
+      # Populate the dashboard on a fresh (ephemeral) database.
+      - key: SEED_DEMO
+        value: "true"
+      # Proxied upstream targets stay blocked; the free tier runs one instance,
+      # so the in-memory channel layer and cache are enough.
+      - key: ALLOW_PRIVATE_UPSTREAM
+        value: "false"

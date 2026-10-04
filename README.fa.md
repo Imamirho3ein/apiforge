@@ -316,7 +316,45 @@ ruff check . && ruff format --check .
 ## دیپلوی
 
 <details>
-<summary><b>گام‌به‌گام روی Liara</b> (ایران)</summary>
+<summary><b>🚀 گزینه‌ی اول: Render (رایگان، بدون کارت بانکی)</b> — پیشنهاد ما</summary>
+
+مخزن یه فایل [`render.yaml`](render.yaml) دارد، پس کل محصول (SPA + API + گیت‌وی + وب‌سوکت)
+در **یک سرویس رایگان** بالا می‌آید:
+
+**۱.** این آدرس را باز کن:
+```
+https://render.com/deploy
+```
+
+**۲.** مخزن `Imamirho3ein/apiforge` را وصل کن → **Apply**
+
+**۳.** بعد از بیلد (چند دقیقه) آدرس سایت را باز کن:
+```
+https://apiforge.onrender.com
+```
+
+ورود با حساب دمو:
+
+| | |
+|---|---|
+| ایمیل | `demo@apiforge.dev` |
+| رمز | `DemoPass!234` |
+
+**نکات پلن رایگان** (همه مدیریت شده):
+
+| رفتار | توضیح |
+|---|---|
+| خوابیدن سرویس | بعد از ۱۵ دقیقه بی‌کاری sleep می‌شود؛ بار اول حدود ۳۰ ثانیه طول می‌کشد |
+| فایل‌سیستم موقتی است | SQLite هر بار از نو ساخته می‌شود |
+| داده‌ی دمو | `seed_demo` **idempotent** است: کلید تکراری صادر نمی‌کند و لاگ دوباره نمی‌سازد |
+
+اگر خواستی داده‌ها بین ری‌استارت‌ها بماند، یک **دیسک پایدار** یا **Postgres مدیریت‌شده**
+اضافه کن و `DATABASE_URL` را ست کن — بقیه‌ی تنظیمات بدون تغییر کار می‌کند.
+
+</details>
+
+<details>
+<summary><b>🇮🇷 گزینه‌ی دوم: Liara (ایرانی، پولی)</b></summary>
 
 ```bash
 npm install -g @liara/cli
@@ -336,7 +374,10 @@ liara env set \
 liara deploy --platform docker --port 8000 --app apiforge
 ```
 
-راهنمای کامل، از جمله اتصال **دامنه‌ی `.ir`**، دیپلوی خودکار و عیب‌یابی:
+لیارا پلن رایگان ندارد (از ۲۷۵٬۰۰۰ تومان در ماه)، ولی برای کاربران داخل ایران
+سریع‌ترین گزینه است و از دامنه‌ی `.ir` پشتیبانی می‌کند.
+
+راهنمای کامل — از جمله اتصال دامنه، دیپلوی خودکار و عیب‌یابی:
 **[`docs/deployment-fa.md`](docs/deployment-fa.md)**
 
 </details>
@@ -348,6 +389,7 @@ liara deploy --platform docker --port 8000 --app apiforge
 ```
 apiforge/
 ├── Dockerfile                یک ایمیج: SPA با Node + بک‌اند Django
+├── render.yaml               دیپلوی رایگان روی Render با یک کلیک
 ├── liara.json                پیکربندی استقرار روی Liara
 ├── docker/entrypoint.sh      انتظار برای DB، migrate، collectstatic، seed
 ├── docker-compose.yml        PostgreSQL + Redis + اپلیکیشن

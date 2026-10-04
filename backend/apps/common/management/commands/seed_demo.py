@@ -151,21 +151,41 @@ class Command(BaseCommand):
                 endpoints.append(endpoint)
         self.stdout.write(f"Projects: {len(projects)}, endpoints: {len(endpoints)}")
 
-        keys = []
-        for name, project, rate_limit, scopes in [
-            ("Production key", projects[0], 600, ["read", "write"]),
-            ("Staging key", projects[0], 60, ["read"]),
-            ("Read-only key", projects[1], 120, ["read"]),
-            ("Global key", None, 300, ["read", "write", "admin"]),
-        ]:
-            key, plaintext = APIKey.generate(
-                user=user, name=name, project=project, rate_limit=rate_limit, scopes=scopes
+        # Idempotency matters: free PaaS tiers (Render, Fly) run the entrypoint
+        # on every cold start with an ephemeral disk. Issuing fresh keys and
+        # re-inserting a week of logs each boot would grow without bound.
+        existing_keys = list(APIKey.objects.filter(user=user).order_by("created_at"))
+        if existing_keys:
+            keys = [(key, None) for key in existing_keys]
+            self.stdout.write(
+                f"API keys: reusing {len(keys)} existing key(s) -> no new secrets issued."
             )
-            key.save()
-            keys.append((key, plaintext))
-        self.stdout.write(self.style.SUCCESS("Issued API keys (shown once):"))
-        for key, plaintext in keys:
-            self.stdout.write(f"  {key.name:<16} {plaintext}")
+        else:
+            keys = []
+            for name, project, rate_limit, scopes in [
+                ("Production key", projects[0], 600, ["read", "write"]),
+                ("Staging key", projects[0], 60, ["read"]),
+                ("Read-only key", projects[1], 120, ["read"]),
+                ("Global key", None, 300, ["read", "write", "admin"]),
+            ]:
+                key, plaintext = APIKey.generate(
+                    user=user,
+                    name=name,
+                    project=project,
+                    rate_limit=rate_limit,
+                    scopes=scopes,
+                )
+                key.save()
+                keys.append((key, plaintext))
+            self.stdout.write(self.style.SUCCESS("Issued API keys (shown once):"))
+            for key, plaintext in keys:
+                self.stdout.write(f"  {key.name:<16} {plaintext}")
+
+        if RequestLog.objects.filter(owner=user).exists():
+            total = RequestLog.objects.count()
+            self.stdout.write(f"Request logs: {total} already present -> skipping generation.")
+            self.stdout.write(f"\nLog in at /login with {user.email} / {DEMO_PASSWORD}")
+            return
 
         now = timezone.now()
         rows = []

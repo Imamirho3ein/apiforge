@@ -169,7 +169,25 @@ single port (`:8000`). Nothing else to configure.
 docker compose exec app python manage.py seed_demo   # optional demo data
 ```
 
-### Option C — Liara (Iranian PaaS)
+### Option C — Render (free, one click)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Imamirho3ein/apiforge)
+
+The repository ships a [`render.yaml`](render.yaml) blueprint, so the whole
+product (SPA + API + gateway + websockets) runs as **one free web service**:
+
+1. Open <https://render.com/deploy>
+2. Connect the `Imamirho3ein/apiforge` repository → **Apply**
+3. Wait for the build (a few minutes), then open `https://apiforge.onrender.com`
+
+Log in with `demo@apiforge.dev` / `DemoPass!234`.
+
+Free-tier caveats, all handled by the app: the service sleeps after ~15
+minutes idle, and the filesystem is ephemeral, so `manage.py seed_demo` is
+**idempotent** — it reuses existing keys and never duplicates logs on the
+cold starts that follow.
+
+### Option D — Liara (Iranian PaaS)
 
 ```bash
 npm install -g @liara/cli && liara login
@@ -179,6 +197,9 @@ liara redis create apiforge-redis --plan g5
 liara env set DJANGO_SECRET_KEY="…" DATABASE_URL="…" REDIS_URL="…" SERVE_SPA=true
 liara deploy --platform docker --port 8000 --app apiforge
 ```
+
+Liara has no free tier (from ~275,000 tomans/month) but gives the fastest
+latency for Iranian visitors and supports `.ir` domains.
 
 **Full step-by-step guide (Persian): [`docs/deployment-fa.md`](docs/deployment-fa.md)** —
 including `.ir` domain setup, automatic GitHub Actions deploys and troubleshooting.
@@ -313,6 +334,7 @@ Coverage highlights:
 ```
 apiforge/
 ├── Dockerfile                single image: Node-built SPA + Django ASGI
+├── render.yaml               one-click free deployment on Render
 ├── liara.json                Iranian PaaS (Liara) deployment config
 ├── docker/
 │   └── entrypoint.sh         wait-for-db, migrate, collectstatic, seed
