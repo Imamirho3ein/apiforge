@@ -1,6 +1,6 @@
 # APIForge — API Contract
 
-Base URL (dev): `http://localhost:8000`
+Base URL (dev): port `8000`
 Auth header: `Authorization: Bearer <access_token>` (JWT)
 Gateway header: `X-API-Key: <api_key>`
 
@@ -63,7 +63,7 @@ CRUD. Query: `?project=<uuid>&method=GET&search=`.
   "path": "/users", "description": "", "is_active": true,
   "mock_enabled": true, "mock_status": 200, "mock_body": {},
   "target_url": "", "request_count": 0,
-  "gateway_url": "http://localhost:8000/gateway/<project-slug>/users",
+  "gateway_url": "/gateway/<project-slug>/users",
   "created_at": "ISO", "updated_at": "ISO"
 }
 ```
@@ -147,12 +147,12 @@ GET only, cursor paginated. Query:
     "endpoint": "uuid|null", "endpoint_name": "List users",
     "method": "GET", "path": "/users", "status_code": 200,
     "latency_ms": 12.3, "api_key": "uuid|null", "key_name": "Staging",
-    "ip_address": "127.0.0.1", "user_agent": "…", "created_at": "ISO"
+    "ip_address": "203.0.113.10", "user_agent": "…", "created_at": "ISO"
   }]
 }
 ```
 
-## WebSocket — `ws://localhost:8000/ws/logs/?token=<access_jwt>`
+## WebSocket — `/ws/logs/?token=<access_jwt>`
 
 Server → client messages:
 

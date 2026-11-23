@@ -128,7 +128,7 @@ python -m venv .venv
 # 2. Frontend (second terminal)
 cd frontend
 npm install
-npm run dev            # http://localhost:5173 — Vite proxies /api, /gateway, /ws to :8000
+npm run dev            # Vite proxies /api, /gateway, /ws to :8000
 ```
 
 No PostgreSQL? The backend falls back to SQLite automatically
@@ -140,7 +140,7 @@ Log in with the seeded account:
 demo@apiforge.dev / DemoPass!234
 ```
 
-API docs: <http://localhost:8000/api/docs/>
+API docs: `/api/docs/`
 
 > **Network note.** If `pip install` fails with
 > `Failed to resolve IP address for 'files.pythonhosted.org'`, your network
@@ -155,12 +155,12 @@ cp .env.example .env
 docker compose up --build
 ```
 
-| Service | URL |
+| Service | Path |
 |---|---|
-| SPA + API (one port) | <http://localhost:8000> |
-| Swagger UI | <http://localhost:8000/api/docs/> |
-| Admin | <http://localhost:8000/admin/> |
-| Health probe | <http://localhost:8000/api/health/> |
+| SPA + API (one port) | `:8000` |
+| Swagger UI | `/api/docs/` |
+| Admin | `/admin/` |
+| Health probe | `/api/health/` |
 
 One image serves the SPA, the API, the gateway and the websocket endpoint on a
 single port (`:8000`). Nothing else to configure.
@@ -213,12 +213,12 @@ image runs locally and in production. See `.env.example` for the full list.
 |---|---|---|
 | `DJANGO_SECRET_KEY` | *(dev fallback)* | **Required in production** |
 | `DJANGO_SETTINGS_MODULE` | `config.settings.dev` | `dev` / `production` / `test` |
-| `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1` | Comma separated |
+| `DJANGO_ALLOWED_HOSTS` | *(dev defaults)* | Comma separated |
 | `DATABASE_URL` | – | Any URL `dj-database-url` understands |
 | `POSTGRES_HOST/PORT/DB/USER/PASSWORD` | – | Used when `DATABASE_URL` is empty |
 | `REDIS_URL` | – | Enables shared rate limits + cross-worker websockets |
-| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | Comma separated |
-| `GATEWAY_BASE_URL` | `http://localhost:8000` | Used to render `gateway_url` in the API |
+| `CORS_ALLOWED_ORIGINS` | *(dev defaults)* | Comma separated |
+| `GATEWAY_BASE_URL` | *(dev defaults)* | Used to render `gateway_url` in the API |
 | `ALLOW_PRIVATE_UPSTREAM` | `true` in DEBUG | SSRF guard for proxied targets |
 | `SERVE_SPA` | auto | Serve the built React bundle from Django (single-container deploys) |
 | `SEED_DEMO` | `false` | Seed demo data on container start |
@@ -241,7 +241,7 @@ otherwise          ──►  In-memory channel layer + local memory cache
 
 ```bash
 curl -H "X-API-Key: af_live_..." \
-     http://localhost:8000/gateway/payments-api/charges
+     /gateway/payments-api/charges
 ```
 
 ```json
@@ -278,7 +278,7 @@ response back. Loopback/private targets are refused unless
 
 ## API reference
 
-Full OpenAPI 3 document: <http://localhost:8000/api/schema/> · Swagger UI: `/api/docs/` · ReDoc: `/api/redoc/`
+Full OpenAPI 3 document: `/api/schema/` · Swagger UI: `/api/docs/` · ReDoc: `/api/redoc/`
 
 <details>
 <summary>Endpoint overview</summary>

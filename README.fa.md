@@ -144,7 +144,7 @@ python -m venv .venv
 ```bash
 cd frontend
 npm install
-npm run dev        # http://localhost:5173
+npm run dev
 ```
 
 Vite درخواست‌های `/api`، `/gateway` و `/ws` را به پورت ۸۰۰۰ پروکسی می‌کند.
@@ -153,11 +153,10 @@ Vite درخواست‌های `/api`، `/gateway` و `/ws` را به پورت ۸�
 
 | | |
 |---|---|
-| نشانی | <http://localhost:5173> |
 | ایمیل | `demo@apiforge.dev` |
 | رمز | `DemoPass!234` |
 
-مستندات Swagger: <http://localhost:8000/api/docs/>
+مستندات Swagger: `/api/docs/`
 
 > **دیتابیس لازم نیست:** اگر PostgreSQL نصب نباشد، بک‌اند خودکار روی SQLite
 > (`backend/db.sqlite3`) اجرا می‌شود — بدون هیچ پیکربندی.
@@ -169,12 +168,12 @@ cp .env.example .env      # ویندوز: copy .env.example .env
 docker compose up --build
 ```
 
-| سرویس | نشانی |
+| سرویس | مسیر |
 |---|---|
-| SPA + API (روی یک پورت) | <http://localhost:8000> |
-| Swagger UI | <http://localhost:8000/api/docs/> |
-| پنل ادمین | <http://localhost:8000/admin/> |
-| بررسی سلامت | <http://localhost:8000/api/health/> |
+| SPA + API (روی یک پورت) | `:8000` |
+| Swagger UI | `/api/docs/` |
+| پنل ادمین | `/admin/` |
+| بررسی سلامت | `/api/health/` |
 
 ```bash
 docker compose exec app python manage.py seed_demo   # داده‌ی نمونه
@@ -191,12 +190,12 @@ docker compose exec app python manage.py seed_demo   # داده‌ی نمونه
 |---|---|---|
 | `DJANGO_SECRET_KEY` | *(مقدار توسعه)* | **در production اجباری است** |
 | `DJANGO_SETTINGS_MODULE` | `config.settings.dev` | `dev` / `production` / `test` |
-| `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1` | جدا شده با کاما |
+| `DJANGO_ALLOWED_HOSTS` | *(پیش‌فرض توسعه)* | جدا شده با کاما |
 | `DATABASE_URL` | – | هر URL که `dj-database-url` بفهمد |
 | `POSTGRES_HOST/PORT/DB/USER/PASSWORD` | – | وقتی `DATABASE_URL` خالی است |
 | `REDIS_URL` | – | rate limit مشترک + وب‌سوکت بین workerها |
-| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | جدا شده با کاما |
-| `GATEWAY_BASE_URL` | `http://localhost:8000` | برای ساخت فیلد `gateway_url` |
+| `CORS_ALLOWED_ORIGINS` | *(پیش‌فرض توسعه)* | جدا شده با کاما |
+| `GATEWAY_BASE_URL` | *(پیش‌فرض توسعه)* | برای ساخت فیلد `gateway_url` |
 | `ALLOW_PRIVATE_UPSTREAM` | `true` در DEBUG | محافظت در برابر SSRF |
 | `SERVE_SPA` | خودکار | سرو کردن بیلد React توسط Django |
 | `SEED_DEMO` | `false` | ساخت داده‌ی نمونه هنگام بالا آمدن کانتینر |
@@ -222,7 +221,7 @@ REDIS_URL هست؟         ──►  کانال‌لییر و کش Redis
 
 ```bash
 curl -H "X-API-Key: af_live_..." \
-     http://localhost:8000/gateway/payments-api/charges
+     /gateway/payments-api/charges
 ```
 
 ```json
@@ -260,9 +259,9 @@ body و هدرها را با `httpx` به سرویس مقصد می‌فرستد 
 
 ## مستندات API
 
-- اسکیمای OpenAPI 3: <http://localhost:8000/api/schema/>
-- Swagger UI: <http://localhost:8000/api/docs/>
-- ReDoc: <http://localhost:8000/api/redoc/>
+- اسکیمای OpenAPI 3: `/api/schema/`
+- Swagger UI: `/api/docs/`
+- ReDoc: `/api/redoc/`
 - قرارداد کامل بین فرانت و بک‌اند: [`docs/api-contract.md`](docs/api-contract.md)
 
 <details>
